@@ -1,0 +1,12 @@
+{
+  "test" : {
+    "PORT" : "3000",
+    "MONGOLAB_BOT_API_ROCKY_URI" : "mongodb://localhost:27017/BotAppTest",
+    "JWT_SECRET" : "adfldsjafsjkfhlks3823brkjdjsf987s2ej78yn"
+  },
+  "development" : {
+    "PORT" : "3000",
+    "MONGOLAB_BOT_API_ROCKY_URI" : "mongodb://localhost:27017/BotAppRocky",
+    "JWT_SECRET" : "adfldsjafsjkfhlks3823brkjdjsf987s2ej78yn"
+  }
+}

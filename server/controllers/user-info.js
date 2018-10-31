@@ -3,7 +3,8 @@ var {User} = require('./../models/user');
 
 
 var getAttrInfo = async (req, res)=>{
-  console.log(JSON.stringify(req.body.queryResult.outputContexts[0], undefined, 2));
+  console.log("Request Body: ");
+  console.log(JSON.stringify(req.body, undefined, 2));
   var params = req.body.queryResult.outputContexts[0].parameters;
   const username = params.username;
   const attribute = params.secrets;
@@ -16,21 +17,18 @@ var getAttrInfo = async (req, res)=>{
     if(!users || users.length <= 0){
       console.log(users);
       res.send(JSON.stringify({
-          "speech" : "Sorry, User doesn't exist!",
-          "displayText" : "Sorry, User doesn't exist!"
+          "fulfillmentText" : "Sorry, User doesn't exist!",
       }));
     }else{
       console.log(users);
       var usrObj = JSON.parse(JSON.stringify(users[0].toObject()));
       res.send(JSON.stringify({
-          "speech" : `${username}, your ${attribute} is ${usrObj[attribute]}`,
-          "displayText" : `${username}, your ${attribute} is ${usrObj[attribute]}`
+          "fulfillmentText" : `${username}, your ${attribute} is ${usrObj[attribute]}`,
       }));
     }
   }catch(e){
     res.send(JSON.stringify({
-        "speech" : "Error. Can you try it again ? ",
-        "displayText" : "Error. Can you try it again ? "
+        "fulfillmentText" : "Error. Can you try it again ? ",
     }));
   }
 };

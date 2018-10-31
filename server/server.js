@@ -27,7 +27,7 @@ app.use((req, res,next)=>{
 	}
 );
 
-router.route('/user/getAdharInfo').post(bAuth, userCtrl.getAdharInfo);
+router.route('/user/getAttributeInfo').post(bAuth, userCtrl.getAttrInfo);
 router.route('/user/addUser').post(bAuth, userCtrl.addUser);
 
 app.listen(port, () => {

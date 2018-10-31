@@ -27,6 +27,7 @@ app.use((req, res,next)=>{
 	}
 );
 
+router.route('/user/test').get(bAuth,userCtrl.getUserTest);
 router.route('/user/getAttributeInfo').post(bAuth, userCtrl.getAttrInfo);
 router.route('/user/addUser').post(bAuth, userCtrl.addUser);
 

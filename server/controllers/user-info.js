@@ -45,7 +45,11 @@ var addUser = (req, res)=>{
     res.status(400).send(e);
   });
 };
+var getUserTest = (req, res)=>{
+    res.send("Test success.");
+};
 module.exports = {
     getAttrInfo,
-    addUser
+    addUser,
+    getUserTest
 }

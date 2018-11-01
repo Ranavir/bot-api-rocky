@@ -2,13 +2,20 @@ const router = require('./../server');
 var {User} = require('./../models/user');
 
 
-var getAttrInfo = async (req, res)=>{
+var getUser = async (req, res)=>{
   console.log("Request Body: ");
   console.log(JSON.stringify(req.body, undefined, 2));
   var params = req.body.queryResult.outputContexts[0].parameters;
   const username = params.username;
   const attribute = params.secrets;
-
+  let attrOriginal;
+  Object.keys(params).forEach(function(key) {
+    if(key === 'secrets.original'){
+      attrOriginal = params[key];
+      return;
+    }
+  });
+  const strAttrOriginal = '';
   res.setHeader('Content-Type', 'application/json');
   try{
     var users = await User.find({
@@ -23,7 +30,7 @@ var getAttrInfo = async (req, res)=>{
       console.log(users);
       var usrObj = JSON.parse(JSON.stringify(users[0].toObject()));
       res.send(JSON.stringify({
-          "fulfillmentText" : `${username}, your ${attribute} is ${usrObj[attribute]}`,
+          "fulfillmentText" : `${username}, your ${attrOriginal} is ${usrObj[attribute]}`,
       }));
     }
   }catch(e){
@@ -47,7 +54,7 @@ var getUserTest = (req, res)=>{
     res.send("Test success.");
 };
 module.exports = {
-    getAttrInfo,
+    getUser,
     addUser,
     getUserTest
 }

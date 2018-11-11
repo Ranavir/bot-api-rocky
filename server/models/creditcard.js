@@ -1,8 +1,9 @@
 const {mongoose} = require('../db/mongoose');
 const validator = require('validator');
 const _ = require('lodash');
+const {encrypt,decrypt} = require('../utils/cryptutils');
 
-var CreditCard = mongoose.model('CreditCard', {
+var CreditCardSchema = new mongoose.Schema({
   cc_bank_name : {
     type : String,
     required : true,
@@ -11,6 +12,8 @@ var CreditCard = mongoose.model('CreditCard', {
   },
   cc_card_no : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : true,
     length : 16,
     unique : true,
@@ -23,7 +26,9 @@ var CreditCard = mongoose.model('CreditCard', {
     trim : true
   },
   cc_pin : {
-    type : Number,
+    type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     minlength: 4
   },
@@ -44,11 +49,15 @@ var CreditCard = mongoose.model('CreditCard', {
   },
   cc_valid_from : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     trim : true
   },
   cc_valid_thru : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     minlength : 1,
     trim : true
@@ -61,17 +70,23 @@ var CreditCard = mongoose.model('CreditCard', {
   },
   cc_cvv : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     minlength : 3,
     trim : true
   },
   cc_inb_username : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     trim : true
   },
   cc_inb_password : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     trim : true
   },
@@ -85,5 +100,5 @@ var CreditCard = mongoose.model('CreditCard', {
     required : true
   }
 });
-
+var CreditCard = mongoose.model('CreditCard',CreditCardSchema);
 module.exports={CreditCard};

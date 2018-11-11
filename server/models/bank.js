@@ -1,8 +1,9 @@
 const {mongoose} = require('../db/mongoose');
 const validator = require('validator');
 const _ = require('lodash');
+const {encrypt,decrypt} = require('../utils/cryptutils');
 
-var Bank = mongoose.model('Bank', {
+var BankSchema = new mongoose.Schema({
   bank_name : {
     type : String,
     required : true,
@@ -11,6 +12,8 @@ var Bank = mongoose.model('Bank', {
   },
   account_no : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : true,
     minlength : 1,
     unique : true,
@@ -24,6 +27,8 @@ var Bank = mongoose.model('Bank', {
   },
   cif : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     trim : true
   },
@@ -40,7 +45,9 @@ var Bank = mongoose.model('Bank', {
     trim : true
   },
   threed_pin : {
-    type : Number,
+    type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     minlength: 4
   },
@@ -70,13 +77,17 @@ var Bank = mongoose.model('Bank', {
     trim : true
   },
   atm_card_no : {
-    type : Number,
+    type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     length : 16,
     trim : true
   },
   atm_pin : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     length : 4,
     trim : true
@@ -89,11 +100,15 @@ var Bank = mongoose.model('Bank', {
   },
   atm_valid_from : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     trim : true
   },
   atm_valid_thru : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     minlength : 1,
     trim : true
@@ -105,27 +120,37 @@ var Bank = mongoose.model('Bank', {
   },
   atm_cvv : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     minlength : 3,
     trim : true
   },
   atm_grids : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     trim : true
   },
   inb_username : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     trim : true
   },
   inb_password : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     trim : true
   },
   inb_txn_password : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     trim : true
   },
@@ -139,5 +164,5 @@ var Bank = mongoose.model('Bank', {
     required : true
   }
 });
-
+var Bank = mongoose.model('Bank',BankSchema);
 module.exports={Bank};

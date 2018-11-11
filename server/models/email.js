@@ -1,6 +1,9 @@
 const {mongoose} = require('../db/mongoose');
 const validator = require('validator');
 const _ = require('lodash');
+const {encrypt,decrypt} = require('../utils/cryptutils');
+
+
 
 var EmailSchema = new mongoose.Schema({
   email_provider : {
@@ -12,14 +15,12 @@ var EmailSchema = new mongoose.Schema({
   email_id : {
     type : String,
     required : true,
-    trim : true,
-    validate : {
-      validator : validator.isEmail,
-      message : '{VALUE} is not a valid email'
-    }
+    trim : true
   },
   email_password : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : true,
     minlength : 5,
     trim : true

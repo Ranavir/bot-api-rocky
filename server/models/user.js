@@ -3,6 +3,7 @@ const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
 const bcrypt = require('bcryptjs');
+const {encrypt,decrypt} = require('../utils/cryptutils');
 
 var UserSchema = new mongoose.Schema({
   username : {
@@ -74,16 +75,22 @@ var UserSchema = new mongoose.Schema({
   },
   adhar : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : true,
     minlength : 12
   },
   pan : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     required : false,
     minlength : 10
   },
   ckyc : {
     type : String,
+    get : decrypt,
+    set : encrypt,
     default: null,
     required : false
   },

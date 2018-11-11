@@ -57,10 +57,10 @@ var secretDetails = async (params)=>{
       return "Sorry, User doesn't exist!";
     }else{
       console.log(`User found with ID: ${user._id}`);
-      var usrObj = JSON.parse(JSON.stringify(user.toObject()));
-      console.log(`Requested Secret retrieved as : ${usrObj[attribute]}`);
-      if(usrObj[attribute]){
-        return `${username}, your ${attrOriginal} is ${usrObj[attribute]}`;
+      // var usrObj = JSON.parse(JSON.stringify(user.toObject()));
+      console.log(`Requested Secret retrieved as : ${user[attribute]}`);
+      if(user[attribute]){
+        return `${username}, your ${attrOriginal} is ${user[attribute]}`;
       }else{
         return `Sorry, ${username}, ${attribute} Cannot Not be found.`;
       }
@@ -143,11 +143,12 @@ var creditCardDetails = async (params)=>{
     }else{
       console.log(`User found with ID: ${user._id}`);
 
+      console.log('Hello what happened...');
       var ccObj = await CreditCard.findOne({
-  	    bank_name : bankName,
+  	    cc_bank_name : bankName,
   	    _user : user._id
   	  });
-
+      console.log('Hello ...');
       // var usrObj = JSON.parse(JSON.stringify(user.toObject()));
       console.log(`Requested Secret retrieved as : ${ccObj[attribute]}`);
       if(ccObj[attribute]){

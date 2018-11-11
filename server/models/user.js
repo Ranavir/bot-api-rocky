@@ -12,6 +12,29 @@ var UserSchema = new mongoose.Schema({
     trim : true,
     unique : true
   },
+  password : {
+    type : String,
+    required : true,
+    minlength : 6
+  },
+  fname : {
+    type : String,
+    required : true,
+    minlength : 1,
+    trim : true
+  },
+  mname : {
+    type : String,
+    required : false,
+    minlength : 1,
+    trim : true
+  },
+  lname : {
+    type : String,
+    required : true,
+    minlength : 1,
+    trim : true
+  },
   email : {
     type : String,
     required : true,
@@ -23,14 +46,35 @@ var UserSchema = new mongoose.Schema({
       message : '{VALUE} is not a valid email'
     }
   },
-  password : {
+  address : {
     type : String,
-    required : true,
-    minlength : 6
+    required : false,
+    minlength : 1,
+    trim : true
+  },
+  phone1 : {
+    type : Number,
+    required : false,
+    minlength: 10
+  },
+  phone2 : {
+    type : Number,
+    required : false,
+    minlength: 10
+  },
+  phone3 : {
+    type : Number,
+    required : false,
+    minlength: 10
+  },
+  dob : {
+    type : String,
+    default: null,
+    required : true
   },
   adhar : {
     type : String,
-    required : false,
+    required : true,
     minlength : 12
   },
   pan : {
@@ -38,10 +82,15 @@ var UserSchema = new mongoose.Schema({
     required : false,
     minlength : 10
   },
-  phone1 : {
-    type : Number,
-    required : false,
-    minlength: 10
+  ckyc : {
+    type : String,
+    default: null,
+    required : false
+  },
+  createdAt : {
+    type : Date,
+    default: Date.now,
+    required : false
   }
 });
 
@@ -49,7 +98,7 @@ var UserSchema = new mongoose.Schema({
 UserSchema.methods.toJSON = function(){
   var user = this;
   var userObject = user.toObject();
-  return _.pick(userObject, ['_id','username','email','adhar','pan','phone1']);
+  return _.omit(userObject, ['password']);
 };
 
 
@@ -57,29 +106,44 @@ UserSchema.methods.toJSON = function(){
 
 
 
-// UserSchema.statics.findByCredentials = function(email, password){
-//   var user = this;
-//
-//   return User.findOne({email}).then((user) => {
-//     if(!user){
-//         return new Promise().reject();
-//     }
-//     return new Promise((resolve, reject) => {
-//       //check password by bcrypt compare first
-//       bcrypt.compare(password,user.password, (err, res) =>{
-//         if(res){
-//           resolve(user);
-//         }else{
-//           reject();
-//         }
-//       });
-//
-//     });
-//
-//   });
-//
-// };
+UserSchema.statics.findByCredentials = function(username, password){
+  var user = this;
 
+  return User.findOne({username}).then((user) => {
+    if(!user){
+        return new Promise().reject();
+    }
+    return new Promise((resolve, reject) => {
+      //check password by bcrypt compare first
+      bcrypt.compare(password,user.password, (err, res) =>{
+        if(res){
+          resolve(user);
+        }else{
+          reject();
+        }
+      });
+
+    });
+
+  });
+
+};
+
+UserSchema.pre('save', function(next){//if u providing next then call next inside this otherwise don't provide next
+  var user = this;
+  if(user.isModified('password')){
+    bcrypt.genSalt(10, (err, salt) =>{
+      console.log('salt',salt);
+      bcrypt.hash(user.password, salt, (err, hash) =>{
+        console.log('hash',hash);
+        user.password = hash;
+        next();
+      });
+    });
+  }else{
+    next();
+  }
+});
 
 var User = mongoose.model('User',UserSchema);
 

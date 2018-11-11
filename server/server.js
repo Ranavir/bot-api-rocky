@@ -16,6 +16,7 @@ const port = process.env.PORT || 3000;
 var router = express.Router();
 
 var userCtrl = require('./controllers/user-info');
+var bankCtrl = require('./controllers/bank-info');
 
 //use below express middleware statement to parse the request body aloways to a json
 app.use(bodyParser.json());
@@ -27,10 +28,9 @@ app.use((req, res,next)=>{
 	}
 );
 
-router.route('/user/test').get(bAuth,userCtrl.getUserTest);
 router.route('/user').post(bAuth, userCtrl.getUser);
 router.route('/user/addUser').post(bAuth, userCtrl.addUser);
-
+router.route('/bank/addBankDetails').post(bAuth,bankCtrl.addBankDetails);
 app.listen(port, () => {
   console.log(`App started up at port : ${port}`);
 });

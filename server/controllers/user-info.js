@@ -3,11 +3,13 @@ var {User} = require('./../models/user');
 
 
 var getUser = async (req, res)=>{
-  console.log("Request Body: ");
-  console.log(JSON.stringify(req.body, undefined, 2));
+  // console.log("Request Body: ");
+  // console.log(JSON.stringify(req.body, undefined, 2));
   var params = req.body.queryResult.outputContexts[0].parameters;
   const username = params.username;
+  const password = params.password;
   const attribute = params.secrets;
+  console.log(`User : ${username} with Password : ${password} requested for Secret : ${attribute}`);
   let attrOriginal;
   Object.keys(params).forEach(function(key) {
     if(key === 'secrets.original'){
@@ -18,20 +20,25 @@ var getUser = async (req, res)=>{
   const strAttrOriginal = '';
   res.setHeader('Content-Type', 'application/json');
   try{
-    var users = await User.find({
-      username : username.trim()
-    });
-    if(!users || users.length <= 0){
-      console.log(users);
+    const user = await User.findByCredentials(username.trim(), password.trim());
+    if(!user){
       res.send(JSON.stringify({
           "fulfillmentText" : "Sorry, User doesn't exist!",
       }));
     }else{
-      console.log(users);
-      var usrObj = JSON.parse(JSON.stringify(users[0].toObject()));
-      res.send(JSON.stringify({
-          "fulfillmentText" : `${username}, your ${attrOriginal} is ${usrObj[attribute]}`,
-      }));
+      console.log(`User found with ID: ${user._id}`);
+      var usrObj = JSON.parse(JSON.stringify(user.toObject()));
+      console.log(`Requested Secret retrieved as : ${usrObj[attribute]}`);
+      if(usrObj[attribute]){
+        res.send(JSON.stringify({
+            "fulfillmentText" : `${username}, your ${attrOriginal} is ${usrObj[attribute]}`,
+        }));
+      }else{
+        res.send(JSON.stringify({
+            "fulfillmentText" : `Sorry, ${username}, ${attribute} Cannot Not be found.`,
+        }));
+      }
+
     }
   }catch(e){
     res.send(JSON.stringify({
@@ -50,11 +57,8 @@ var addUser = (req, res)=>{
     res.status(400).send(e);
   });
 };
-var getUserTest = (req, res)=>{
-    res.send("Test success.");
-};
+
 module.exports = {
     getUser,
-    addUser,
-    getUserTest
+    addUser
 }

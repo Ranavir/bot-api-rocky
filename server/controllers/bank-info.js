@@ -32,6 +32,7 @@ var addBankDetails = async (req, res)=>{
       acc_secret_quest_ans : req.body.acc_secret_quest_ans,
       atm_card_no : req.body.atm_card_no,
       atm_pin : req.body.atm_pin,
+      atm_type : req.body.atm_type,
       atm_valid_from : req.body.atm_valid_from,
       atm_valid_thru : req.body.atm_valid_thru,
       atm_name_on_card : req.body.atm_name_on_card,

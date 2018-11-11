@@ -2,55 +2,38 @@ const {mongoose} = require('../db/mongoose');
 const validator = require('validator');
 const _ = require('lodash');
 
-var Bank = mongoose.model('Bank', {
-  bank_name : {
+var CreditCard = mongoose.model('CreditCard', {
+  cc_bank_name : {
     type : String,
     required : true,
     minlength : 3,
     trim : true
   },
-  account_no : {
+  cc_card_no : {
     type : String,
     required : true,
-    minlength : 1,
+    length : 16,
     unique : true,
     trim : true
   },
-  account_type : {//(bank|postal)
+  cc_type :{
     type : String,
     required : true,
-    minlength : 1,
+    minlength : 4,
     trim : true
   },
-  cif : {
-    type : String,
-    required : false,
-    trim : true
-  },
-  ifsc : {
-    type : String,
-    required : false,
-    minlength : 1,
-    trim : true
-  },
-  branch : {
-    type : String,
-    required : true,
-    minlength : 1,
-    trim : true
-  },
-  threed_pin : {
+  cc_pin : {
     type : Number,
     required : false,
     minlength: 4
   },
-  acc_mobile_no : {
+  cc_mobile_no : {
     type : Number,
     required : false,
     minlength : 10,
     trim : true
   },
-  acc_email_id : {
+  cc_email_id : {
     type : String,
     required : false,
     trim : true,
@@ -59,72 +42,35 @@ var Bank = mongoose.model('Bank', {
       message : '{VALUE} is not a valid email'
     }
   },
-  acc_secret_quest : {
+  cc_valid_from : {
     type : String,
     required : false,
     trim : true
   },
-  acc_secret_quest_ans : {
-    type : String,
-    required : false,
-    trim : true
-  },
-  atm_card_no : {
-    type : Number,
-    required : false,
-    length : 16,
-    trim : true
-  },
-  atm_pin : {
-    type : String,
-    required : false,
-    length : 4,
-    trim : true
-  },
-  atm_type :{
-    type : String,
-    required : true,
-    minlength : 4,
-    trim : true
-  },
-  atm_valid_from : {
-    type : String,
-    required : false,
-    trim : true
-  },
-  atm_valid_thru : {
+  cc_valid_thru : {
     type : String,
     required : false,
     minlength : 1,
     trim : true
   },
-  atm_name_on_card : {
+  cc_name_on_card : {
     type : String,
     required : false,
+    minlength : 1,
     trim : true
   },
-  atm_cvv : {
+  cc_cvv : {
     type : String,
     required : false,
     minlength : 3,
     trim : true
   },
-  atm_grids : {
+  cc_inb_username : {
     type : String,
     required : false,
     trim : true
   },
-  inb_username : {
-    type : String,
-    required : false,
-    trim : true
-  },
-  inb_password : {
-    type : String,
-    required : false,
-    trim : true
-  },
-  inb_txn_password : {
+  cc_inb_password : {
     type : String,
     required : false,
     trim : true
@@ -140,4 +86,4 @@ var Bank = mongoose.model('Bank', {
   }
 });
 
-module.exports={Bank};
+module.exports={CreditCard};

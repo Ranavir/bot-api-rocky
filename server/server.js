@@ -17,6 +17,8 @@ var router = express.Router();
 
 var userCtrl = require('./controllers/user-info');
 var bankCtrl = require('./controllers/bank-info');
+var ccCtrl = require('./controllers/creditcard-info');
+var emailCtrl = require('./controllers/email-info');
 
 //use below express middleware statement to parse the request body aloways to a json
 app.use(bodyParser.json());
@@ -31,6 +33,9 @@ app.use((req, res,next)=>{
 router.route('/user').post(bAuth, userCtrl.getUser);
 router.route('/user/addUser').post(bAuth, userCtrl.addUser);
 router.route('/bank/addBankDetails').post(bAuth,bankCtrl.addBankDetails);
+router.route('/cc/addCreditCardDetails').post(bAuth,ccCtrl.addCreditCardDetails);
+router.route('/email/addEmail').post(bAuth,emailCtrl.addEmail);
+
 app.listen(port, () => {
   console.log(`App started up at port : ${port}`);
 });

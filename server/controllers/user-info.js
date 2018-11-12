@@ -6,12 +6,11 @@ var {Email} = require('./../models/email');
 var {spoofEmail} = require('./../utils/mailutils');
 
 var getUser = async (req, res)=>{
-  // console.log("Request Body: ");
-  // console.log(JSON.stringify(req.body, undefined, 2));
+  console.log("Request Body: ");
+  console.log(JSON.stringify(req.body, undefined, 2));
   var isGoogle = req.body.hasOwnProperty('originalDetectIntentRequest') ?
                   req.body.originalDetectIntentRequest.source === 'google' : false;
-  var surfaceCapabilities = req.body.hasOwnProperty('originalDetectIntentRequest') ?
-                  req.body.originalDetectIntentRequest.payload.surface.capabilities : undefined;
+  var surfaceCapabilities = isGoogle ? req.body.originalDetectIntentRequest.payload.surface.capabilities : undefined;
   var isAudioAvailable = await isAudioOutputAvailable(surfaceCapabilities);
 
   //find out the intent

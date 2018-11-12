@@ -6,8 +6,8 @@ var {Email} = require('./../models/email');
 var {spoofEmail} = require('./../utils/mailutils');
 
 var getUser = async (req, res)=>{
-  console.log("Request Body: ");
-  console.log(JSON.stringify(req.body, undefined, 2));
+  // console.log("Request Body: ");
+  // console.log(JSON.stringify(req.body, undefined, 2));
   var isGoogle = req.body.hasOwnProperty('originalDetectIntentRequest') ?
                   req.body.originalDetectIntentRequest.source === 'google' : false;
   var surfaceCapabilities = isGoogle ? req.body.originalDetectIntentRequest.payload.surface.capabilities : undefined;
@@ -71,7 +71,7 @@ var secretDetails = async (params, isGoogle, isAudioAvailable)=>{
     }else{
       console.log(`User found with ID: ${user._id}`);
       // var usrObj = JSON.parse(JSON.stringify(user.toObject()));
-      console.log(`Requested Secret retrieved as : ${user[attribute]}`);
+      console.log(`Requested Secret retrieved as : @@@@@@@@`);//${user[attribute]}
       if(user[attribute]){
         let response = `${username}, your ${attrOriginal} is ${user[attribute]}`;
         if(isGoogle && isAudioAvailable && !isNaN(user[attribute])){
@@ -127,7 +127,7 @@ var bankDetails = async (params, isGoogle, isAudioAvailable)=>{
   	  });
 
       // var usrObj = JSON.parse(JSON.stringify(user.toObject()));
-      console.log(`Requested Secret retrieved as : ${bankObj[attribute]}`);
+      console.log(`Requested Secret retrieved as : @@@@@@@@`);//${bankObj[attribute]}
       if(bankObj[attribute]){
         let response = `${username}, your ${bankName} ${attrOriginal} is ${bankObj[attribute]}`;
         if(isGoogle && isAudioAvailable && !isNaN(bankObj[attribute])){
@@ -183,7 +183,7 @@ var creditCardDetails = async (params, isGoogle, isAudioAvailable)=>{
   	    _user : user._id
   	  });
       // var usrObj = JSON.parse(JSON.stringify(user.toObject()));
-      console.log(`Requested Secret retrieved as : ${ccObj[attribute]}`);
+      console.log(`Requested Secret retrieved as : @@@@@@@@`);//${ccObj[attribute]}
       if(ccObj[attribute]){
         let response = `${username}, your ${bankName} ${attrOriginal} is ${ccObj[attribute]}`;
         if(isGoogle && isAudioAvailable && !isNaN(ccObj[attribute])){
@@ -243,7 +243,7 @@ var emailDetails = async (params, isGoogle, isAudioAvailable)=>{
         emails.forEach((email)=>{
           info += `[Email id : ${email.email_id} & Password : ${email.email_password}] `
         });
-        console.log(`Requested Secret retrieved as : ${info.trim()}`);
+        console.log(`Requested Secret retrieved as : @@@@@@@@`);//${info.trim()}
         return `${username}, your ${attrOriginal} details are as follows:  ${info.trim()}`;
       }else{
         return `Sorry, ${attrOriginal} for bank ${bankName} Cannot Not be found.`;

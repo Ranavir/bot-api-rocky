@@ -30,7 +30,7 @@ app.use((req, res,next)=>{
 	}
 );
 
-router.route('/user').post(bAuth, userCtrl.getUser);
+router.route('/webhook').post(bAuth, userCtrl.getUser);
 router.route('/user/addUser').post(bAuth, userCtrl.addUser);
 router.route('/bank/addBankDetails').post(bAuth,bankCtrl.addBankDetails);
 router.route('/cc/addCreditCardDetails').post(bAuth,ccCtrl.addCreditCardDetails);

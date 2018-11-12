@@ -8,6 +8,11 @@ var {spoofEmail} = require('./../utils/mailutils');
 var getUser = async (req, res)=>{
   // console.log("Request Body: ");
   // console.log(JSON.stringify(req.body, undefined, 2));
+  var isGoogle = req.body.hasOwnProperty('originalDetectIntentRequest') ?
+                  req.body.originalDetectIntentRequest.source === 'google' : false;
+  var surfaceCapabilities = req.body.hasOwnProperty('originalDetectIntentRequest') ?
+                  req.body.originalDetectIntentRequest.payload.surface.capabilities : undefined;
+  var isAudioAvailable = await isAudioOutputAvailable(surfaceCapabilities);
 
   //find out the intent
   var intent = req.body.queryResult.intent.displayName;
@@ -15,19 +20,19 @@ var getUser = async (req, res)=>{
   let fulfillmentText;
   switch(intent){
     case "my-secret-details":
-      fulfillmentText = await secretDetails(params);
+      fulfillmentText = await secretDetails(params, isGoogle, isAudioAvailable);
       break;
     case "my-bank-details":
-      fulfillmentText = await bankDetails(params);
+      fulfillmentText = await bankDetails(params, isGoogle, isAudioAvailable);
       break;
     case "my-credit-card-details":
-      fulfillmentText = await creditCardDetails(params);
+      fulfillmentText = await creditCardDetails(params, isGoogle, isAudioAvailable);
       break;
     case "my-email-details":
-      fulfillmentText = await emailDetails(params);
+      fulfillmentText = await emailDetails(params, isGoogle, isAudioAvailable);
       break;
     case "email-spoof":
-      fulfillmentText = await emailSpoof(params);
+      fulfillmentText = await emailSpoof(params, isGoogle, isAudioAvailable);
       break;
     default:
       fulfillmentText = "Error. Can you try it again ?";
@@ -38,8 +43,17 @@ var getUser = async (req, res)=>{
 
 };
 
+//check ssml for audio output availability
+var isAudioOutputAvailable = (surfaceCapabilities) => {
+  if(surfaceCapabilities && surfaceCapabilities.length > 0){
+      var sc = surfaceCapabilities.filter((sc) => sc.name === 'actions.capability.AUDIO_OUTPUT');
+      return (sc.length === 1);
+  }else{
+    return false;
+  }
+};
 //my-secret-details
-var secretDetails = async (params)=>{
+var secretDetails = async (params, isGoogle, isAudioAvailable)=>{
   const username = params.username;
   const password = params.password;
   const attribute = params.secrets;
@@ -60,7 +74,18 @@ var secretDetails = async (params)=>{
       // var usrObj = JSON.parse(JSON.stringify(user.toObject()));
       console.log(`Requested Secret retrieved as : ${user[attribute]}`);
       if(user[attribute]){
-        return `${username}, your ${attrOriginal} is ${user[attribute]}`;
+        let response = `${username}, your ${attrOriginal} is ${user[attribute]}`;
+        if(isGoogle && isAudioAvailable && !isNaN(user[attribute])){
+          response = '<speak>';
+          response += `${username}, your ${attrOriginal} is <break time="1000ms"/> <say-as interpret-as="characters">${user[attribute]}</say-as>.`;
+          response += '</speak>';
+        }
+        if(isGoogle && isAudioAvailable && attribute === 'dob'){
+          response = '<speak>';
+          response += `${username}, your ${attrOriginal} is <break time="1000ms"/> <say-as interpret-as="date" format="ddmmyyyy" detail="1">${user[attribute]}</say-as>.`;
+          response += '</speak>';
+        }
+        return response;
       }else{
         return `Sorry, ${username}, ${attribute} Cannot Not be found.`;
       }
@@ -72,7 +97,7 @@ var secretDetails = async (params)=>{
 };//end of my-secret-details
 
 //my-bank-details
-var bankDetails = async (params)=>{
+var bankDetails = async (params, isGoogle, isAudioAvailable)=>{
   const username = params.username;
   const password = params.password;
   let attribute;
@@ -105,9 +130,20 @@ var bankDetails = async (params)=>{
       // var usrObj = JSON.parse(JSON.stringify(user.toObject()));
       console.log(`Requested Secret retrieved as : ${bankObj[attribute]}`);
       if(bankObj[attribute]){
-        return `${username}, your ${bankName} ${attrOriginal} is ${bankObj[attribute]}`;
+        let response = `${username}, your ${bankName} ${attrOriginal} is ${bankObj[attribute]}`;
+        if(isGoogle && isAudioAvailable && !isNaN(bankObj[attribute])){
+          response = '<speak>';
+          response += `${username}, your ${bankName} ${attrOriginal} is <break time="1000ms"/> <say-as interpret-as="characters">${bankObj[attribute]}</say-as>.`;
+          response += '</speak>';
+        }
+        if(isGoogle && isAudioAvailable && (attribute === 'atm_valid_from' || attribute === 'atm_valid_thru')){
+          response = '<speak>';
+          response += `${username}, your ${bankName} ${attrOriginal} is <break time="1000ms"/> <say-as interpret-as="date" format="my">${bankObj[attribute]}</say-as>.`;
+          response += '</speak>';
+        }
+        return response;
       }else{
-        return `Sorry, ${attrOriginal} for bank ${bankName}Cannot Not be found.`;
+        return `Sorry, ${attrOriginal} for bank ${bankName} Cannot Not be found.`;
       }
 
     }
@@ -118,7 +154,7 @@ var bankDetails = async (params)=>{
 
 
 //my-credit-card-details
-var creditCardDetails = async (params)=>{
+var creditCardDetails = async (params, isGoogle, isAudioAvailable)=>{
   const username = params.username;
   const password = params.password;
   let attribute;
@@ -143,18 +179,27 @@ var creditCardDetails = async (params)=>{
     }else{
       console.log(`User found with ID: ${user._id}`);
 
-      console.log('Hello what happened...');
       var ccObj = await CreditCard.findOne({
   	    cc_bank_name : bankName,
   	    _user : user._id
   	  });
-      console.log('Hello ...');
       // var usrObj = JSON.parse(JSON.stringify(user.toObject()));
       console.log(`Requested Secret retrieved as : ${ccObj[attribute]}`);
       if(ccObj[attribute]){
-        return `${username}, your ${bankName} ${attrOriginal} is ${ccObj[attribute]}`;
+        let response = `${username}, your ${bankName} ${attrOriginal} is ${ccObj[attribute]}`;
+        if(isGoogle && isAudioAvailable && !isNaN(ccObj[attribute])){
+          response = '<speak>';
+          response += `${username}, your ${bankName} ${attrOriginal} is <break time="1000ms"/> <say-as interpret-as="characters">${ccObj[attribute]}</say-as>.`;
+          response += '</speak>';
+        }
+        if(isGoogle && isAudioAvailable && (attribute === 'cc_valid_from' || attribute === 'cc_valid_thru')){
+          response = '<speak>';
+          response += `${username}, your ${bankName} ${attrOriginal} is <break time="1000ms"/> <say-as interpret-as="date" format="my">${ccObj[attribute]}</say-as>.`;
+          response += '</speak>';
+        }
+        return response;
       }else{
-        return `Sorry, ${attrOriginal} for bank ${bankName}Cannot Not be found.`;
+        return `Sorry, ${attrOriginal} for bank ${bankName} Cannot Not be found.`;
       }
 
     }
@@ -164,7 +209,7 @@ var creditCardDetails = async (params)=>{
 };//end of my-bank-details
 
 //my-email-details
-var emailDetails = async (params)=>{
+var emailDetails = async (params, isGoogle, isAudioAvailable)=>{
   const username = params.username;
   const password = params.password;
   let attribute;
@@ -202,7 +247,7 @@ var emailDetails = async (params)=>{
         console.log(`Requested Secret retrieved as : ${info.trim()}`);
         return `${username}, your ${attrOriginal} details are as follows:  ${info.trim()}`;
       }else{
-        return `Sorry, ${attrOriginal} for bank ${bankName}Cannot Not be found.`;
+        return `Sorry, ${attrOriginal} for bank ${bankName} Cannot Not be found.`;
       }
 
     }
@@ -212,7 +257,7 @@ var emailDetails = async (params)=>{
 };//end of my-email-details
 
 //email-spoof
-var emailSpoof = async (params)=>{
+var emailSpoof = async (params, isGoogle, isAudioAvailable)=>{
   const username = params.username;
   const password = params.password;
   let to,from,subject,text,html;

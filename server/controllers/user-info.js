@@ -56,7 +56,7 @@ var secretDetails = async (params, isGoogle, isAudioAvailable)=>{
   const username = params.username;
   const password = params.password;
   const attribute = params.secrets;
-  console.log(`User : ${username} with Password : ${password} requested for Secret : ${attribute}`);
+  console.log(`User : ${username} with Password : @@@@@@@@ requested for Secret : ${attribute}`);
   let attrOriginal;
   Object.keys(params).forEach(function(key) {
     if(key === 'secrets.original'){
@@ -113,7 +113,7 @@ var bankDetails = async (params, isGoogle, isAudioAvailable)=>{
       bankName = params[key];
     }
   });
-  console.log(`User : ${username} with Password : ${password} requested for Secret : ${attribute}`);
+  console.log(`User : ${username} with Password : @@@@@@@@ requested for Secret : ${attribute}`);
   try{
     const user = await User.findByCredentials(username.trim(), password.trim());
     if(!user){
